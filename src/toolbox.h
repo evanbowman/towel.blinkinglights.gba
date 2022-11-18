@@ -9,11 +9,11 @@
 #ifndef TOOLBOX_H
 #define TOOLBOX_H
 
+
 // === (from tonc_types.h) ============================================
 
 typedef unsigned char   u8;
 typedef unsigned short  u16;
-typedef unsigned int    u32;
 
 typedef u16 COLOR;
 
@@ -50,8 +50,39 @@ typedef u16 COLOR;
 
 #define vid_mem     ((u16*)MEM_VRAM)
 
+#define M3_SIZE			0x12C00		//!< Mode 3 buffer size
+
+typedef u16 COLOR;
+
+#define VRAM_PAGE_SIZE	0x0A000
+#define MEM_VRAM_BACK	(MEM_VRAM+ VRAM_PAGE_SIZE)
+#define DCNT_PAGE			0x0010	//!< Page indicator
+#define pal_bg_mem		((COLOR*)MEM_PAL)
+#define MEM_PAL		0x05000000	//!< Palette. Note: no 8bit write !!
+
+
 INLINE void m3_plot(int x, int y, COLOR clr)
-{   vid_mem[y*SCREEN_WIDTH+x]= clr;    }
+{   mem_back[y*SCREEN_WIDTH+x]= clr;    }
+
+INLINE void m3_fill(COLOR clr)
+{
+    int ii;
+    u32 *dst= (u32*)mem_back;
+    u32 wd= (clr<<16) | clr;
+
+    for(ii=0; ii<M3_SIZE/4; ii++)
+        *dst++= wd;
+}
+
+IWRAM_CODE void m3_fill_black()
+{
+    int ii;
+    u32 *dst= (u32*)mem_back;
+
+    for(ii=0; ii<M3_SIZE/4; ii++)
+        *dst++= 0;
+}
+
 
 #define CLR_BLACK   0x0000
 #define CLR_RED     0x001F
@@ -76,6 +107,7 @@ INLINE COLOR RGB15(u32 red, u32 green, u32 blue)
 
 static inline
 void VBlankIntrWait()	{ SystemCall(5); }
+
 
 
 #endif

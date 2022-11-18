@@ -20,7 +20,7 @@ include $(DEVKITARM)/gba_rules
 # the makefile is found
 #
 #---------------------------------------------------------------------------------
-TARGET		:= $(notdir $(CURDIR))
+TARGET		:= ASCII_DRIVER
 BUILD		:= build
 SOURCES		:= src
 INCLUDES	:= include
@@ -32,7 +32,7 @@ MUSIC		:=
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 -std=c11 \
 		-mcpu=arm7tdmi -mtune=arm7tdmi\
 		$(ARCH)
 
